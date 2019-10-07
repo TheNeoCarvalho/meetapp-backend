@@ -10,7 +10,7 @@ class NotificationsController {
     if (!isProvider) {
       return res
         .status(401)
-        .json({ error: 'Only provider can load notifications' });
+        .json({ error: 'Somente o proprietário pode carregar notificações' });
     }
 
     const notifications = await Notification.find({

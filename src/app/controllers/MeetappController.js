@@ -124,19 +124,19 @@ class MeetappController {
 
   async store(req, res) {
     const { title, description, location, date, banner_id } = req.body;
-
+    /* VERIFYING THE BANNER */
     if (banner_id) {
       const image = await File.findByPk(banner_id);
       if (!image)
         return res.status(400).json({ error: 'Banner não encontrado' });
       if (image.type !== 'banner')
-        return res.status(400).json({ error: 'Sua foto deve ser um banner' });
-
+        return res.status(400).json({ error: 'Sua imagem deve ser um banner' });
+    }
 
     if (isBefore(parseISO(date), new Date()))
       return res
         .status(400)
-        .json({ error: 'Você não pode criar um Meetapp com data anterior!' });
+        .json({ error: 'Você não pode criar um mettapp com data anterior!' });
 
     const meetapp = await Meetapp.create({
       title,
@@ -158,17 +158,19 @@ class MeetappController {
       if (!meetapp) throw new Error('Meetapp não existe');
       if (meetapp.past) throw new Error('Meetapp finalizado');
       if (req.userId !== meetapp.owner_id)
-        throw new Error(`Você não é dono do meetapp`);
+        throw new Error(`Você não é o proprietário deste meetapp`);
 
+      /* VERIFYING THE BANNER */
       if (banner_id && banner_id !== meetapp.banner_id) {
         const image = await File.findByPk(banner_id);
-        if (!image) throw new Error('Imagem não encontrada');
+        if (!image) throw new Error('Image não encontrada');
         if (image.type !== 'banner')
-          throw new Error('Sua foto deve ser um banner');
+          throw new Error('Sua imagem deve ser um banner');
       }
 
+      /* VERIFYING THE PAST DATE */
       if (date && isBefore(parseISO(date), new Date()))
-        throw new Error('Data anterior não é permitido');
+        throw new Error('Data anteriores não são permitido');
     } catch (e) {
       return res.status(400).json({ error: e.message });
     }
@@ -215,9 +217,9 @@ class MeetappController {
 
     try {
       if (!meetapp) throw new Error('Este meetapp não existe!');
-      if (meetapp.canceled_at) throw new Error('Este meetapp foi cancelado');
+      if (meetapp.canceled_at) throw new Error('Este meetapp foi cancelado!');
       if (meetapp.past)
-        throw new Error('Você não pode excluir um meetapp finalizado!');
+        throw new Error('Você não pode excluir um meetapp concluído!');
       if (req.userId !== meetapp.owner_id)
         throw new Error('Você não é o proprietário deste meetapp!');
     } catch (e) {

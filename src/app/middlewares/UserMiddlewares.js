@@ -38,7 +38,7 @@ export const updateUser = async (req, res, next) => {
     confirmPassword: Yup.string().when('password', (password, field) =>
       password
         ? field
-            .required('You must to confirm the password')
+            .required('Você deve confirmar a senha')
             .oneOf([Yup.ref('password')])
         : field
     ),

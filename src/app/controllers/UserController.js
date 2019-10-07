@@ -10,6 +10,7 @@ class UserController {
     }
     const user = await User.create(req.body);
     const { id, name, email } = user;
+
     await Notification.create({
       user: id,
       content: `Bem vindo ao Meetapp!`,
@@ -31,7 +32,6 @@ class UserController {
 
     const user = await User.findByPk(req.userId);
 
-    /* verifying if email already exist */
     if (email !== user.email) {
       const userExist = await User.findOne({
         where: { email },
@@ -44,15 +44,15 @@ class UserController {
     if (avatar_id) {
       const image = await File.findByPk(avatar_id);
       if (!image)
-        return res.status(400).json({ error: 'Avatar não encontrado' });
+        return res.status(400).json({ error: 'Avatar não encontrado!' });
       if (image.type !== 'avatar')
         return res
           .status(400)
-          .json({ error: 'Seu avatar deve ser uma foto para o perfil' });
+          .json({ error: 'Seu avatar deve ser uma foto para o perfil!' });
     }
 
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return res.status(401).json({ error: 'Senha não corresponde' });
+      return res.status(401).json({ error: 'As senhas não correspondem!' });
     }
 
     await user.update(req.body);
